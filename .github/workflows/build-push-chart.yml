@@ -18,7 +18,7 @@ on:
 permissions: read-all
 jobs:
   setenv:
-    uses: ortelius/workflow-toolkit/.github/workflows/env-config-workflow.yml@467223eadd0705313fa26090dd52f8b6b3d335bf
+    uses: DeployHubProject/workflow-toolkit/.github/workflows/env-config-workflow.yml@d7658059e40764e1c2944670691b730799c01299
     with:
       gh_head_ref: ${{ github.head_ref }}
       gh_ref_name: ${{ github.ref_name }}
@@ -29,7 +29,7 @@ jobs:
   helm:
     permissions:
       contents: write
-    uses: ortelius/workflow-toolkit/.github/workflows/helm-release-workflow.yml@467223eadd0705313fa26090dd52f8b6b3d335bf
+    uses: DeployHubProject/workflow-toolkit/.github/workflows/helm-release-workflow.yml@d7658059e40764e1c2944670691b730799c01299
     needs:
       - setenv
     with:
