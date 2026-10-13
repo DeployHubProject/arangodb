@@ -18,7 +18,7 @@ on:
 permissions: read-all
 jobs:
   setenv:
-    uses: DeployHubProject/workflow-toolkit/.github/workflows/env-config-workflow.yml@d7658059e40764e1c2944670691b730799c01299
+    uses: DeployHubProject/workflow-toolkit/.github/workflows/env-config-workflow.yml@3ba1ff7dd63a2bc2a914448d0347729e1cf0580b
     with:
       gh_head_ref: ${{ github.head_ref }}
       gh_ref_name: ${{ github.ref_name }}
@@ -29,7 +29,7 @@ jobs:
   helm:
     permissions:
       contents: write
-    uses: DeployHubProject/workflow-toolkit/.github/workflows/helm-release-workflow.yml@d7658059e40764e1c2944670691b730799c01299
+    uses: DeployHubProject/workflow-toolkit/.github/workflows/helm-release-workflow.yml@3ba1ff7dd63a2bc2a914448d0347729e1cf0580b
     needs:
       - setenv
     with:
