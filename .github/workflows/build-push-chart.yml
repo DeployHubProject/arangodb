@@ -18,7 +18,7 @@ on:
 permissions: read-all
 jobs:
   setenv:
-    uses: DeployHubProject/workflow-toolkit/.github/workflows/env-config-workflow.yml@3ba1ff7dd63a2bc2a914448d0347729e1cf0580b
+    uses: DeployHubProject/workflow-toolkit/.github/workflows/env-config-workflow.yml@0abf58800631f8b7cb9c4a330ccb2bd2318112eb
     with:
       gh_head_ref: ${{ github.head_ref }}
       gh_ref_name: ${{ github.ref_name }}
@@ -29,7 +29,7 @@ jobs:
   helm:
     permissions:
       contents: write
-    uses: DeployHubProject/workflow-toolkit/.github/workflows/helm-release-workflow.yml@3ba1ff7dd63a2bc2a914448d0347729e1cf0580b
+    uses: DeployHubProject/workflow-toolkit/.github/workflows/helm-release-workflow.yml@0abf58800631f8b7cb9c4a330ccb2bd2318112eb
     needs:
       - setenv
     with:
@@ -46,4 +46,4 @@ jobs:
       GPG_KEYRING_BASE64: ${{ secrets.GPG_KEYRING_BASE64 }}
       GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
       GPG_KEY: ${{ secrets.GPG_KEY }}
-      gh_token: ${{ secrets.HELM_INDEXER_TOKEN }}
+      gh_token: ${{ secrets.DH_HELM_INDEXER_TOKEN }}
