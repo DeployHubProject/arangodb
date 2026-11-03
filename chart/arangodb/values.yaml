@@ -16,7 +16,7 @@ replicaCount: 1
 
 image:
   repository: arangodb
-  tag: 3.12.7
+  tag: 3.12.13
   pullPolicy: IfNotPresent
 
 # Connection details -> rendered into the `arangodb` Secret (secret.yaml).
