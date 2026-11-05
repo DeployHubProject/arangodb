@@ -1,0 +1,13 @@
+{{- if (.Values.ingress).enabled }}
+{{- $host := required "ERROR: .Values.ingress.host is required when ingress.enabled=true." .Values.ingress.host }}
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: {{ .Values.ingress.managedCertName | default "arangodb-managed-cert" }}
+  labels:
+    app: {{ include "microservice.name" . }}
+spec:
+  domains:
+    - {{ $host | quote }}
+{{- end }}

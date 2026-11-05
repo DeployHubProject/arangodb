@@ -18,6 +18,17 @@ metadata:
   name: {{ include "microservice.name" . }}
   labels:
     app: {{ include "microservice.name" . }}
+  {{- $ingress := .Values.ingress | default dict }}
+  {{- if or $ingress.enabled .Values.service.annotations }}
+  annotations:
+    {{- if $ingress.enabled }}
+    cloud.google.com/neg: '{"ingress": true}'
+    cloud.google.com/backend-config: '{"default": "{{ include "microservice.name" . }}-backendconfig"}'
+    {{- end }}
+    {{- with .Values.service.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- end }}
 spec:
   selector:
     app: {{ include "microservice.name" . }}

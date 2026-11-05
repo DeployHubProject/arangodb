@@ -35,6 +35,56 @@ storage:
 service:
   type: NodePort
   port: 8529
+  # Extra Service annotations. When ingress.enabled is true the chart adds the
+  # NEG and BackendConfig annotations itself; anything here is merged on top.
+  annotations: {}
+
+# ---------------------------------------------------------------------------
+# External read-only access for developers (GKE only)
+#
+# DISABLED BY DEFAULT. Enabling it renders a Cloud Armor-protected HTTPS
+# ingress for the database, separate from the public app ingress. Rendering
+# with enabled=false changes nothing in the cluster.
+#
+# Order of operations:
+#   1. Reserve the static IP:  gcloud compute addresses create <staticIpName> --global
+#   2. Create the Cloud Armor policy (default deny + allow rules for dev IPs);
+#      see chart/arangodb/README.md or scripts/cloud-armor.sh
+#   3. DNS is automatic: external-dns creates the Cloudflare record from `host`
+#      once the ingress has an address (DNS-only, see annotations below).
+#      The host must fall inside external-dns's --domain-filter.
+#   4. Set enabled: true
+#
+# securityPolicy is REQUIRED when enabled: the chart refuses to render an
+# internet-facing database ingress with no allowlist attached.
+#
+# ingress.nodePort is read by service.yaml if you need to pin the NodePort.
+# ---------------------------------------------------------------------------
+ingress:
+  enabled: false
+  host: ""                              # e.g. arangodb.example.com
+  staticIpName: ""                      # reserved global static IP name
+  managedCertName: arangodb-managed-cert
+  # Own FrontendConfig (HTTP->HTTPS redirect), same pattern as the frontend chart.
+  # Not shared with frontend-frontend-config: that object belongs to the frontend
+  # Helm release, and removing/renaming it there would silently break this ingress.
+  redirectToHttps: true
+  # Extra Ingress annotations (merged last, so they can override the defaults).
+  # external-dns reads the host from spec.rules and the IP from the ingress
+  # status, so no hostname annotation is needed. The Cloudflare annotation below
+  # is inert if you do not run external-dns.
+  #
+  # IMPORTANT: keep Cloudflare in DNS-only mode (proxied=false) for this host.
+  # Behind the orange-cloud proxy, Cloud Armor sees Cloudflare's IPs instead of
+  # the developers' (every developer would be blocked, or you would have to
+  # allow Cloudflare's ranges, which defeats the allowlist), and the Google-managed
+  # certificate cannot provision because the name does not resolve to the LB IP.
+  annotations:
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+  backendConfig:
+    securityPolicy: ""                  # Cloud Armor policy name (required when enabled)
+    timeoutSec: 300                     # LB default is 30s, which cuts off long AQL queries
+    healthCheckPath: /_admin/server/availability
 
 # ---------------------------------------------------------------------------
 # Resources

@@ -1,0 +1,12 @@
+{{- if and (.Values.ingress).enabled .Values.ingress.redirectToHttps }}
+---
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: {{ include "microservice.name" . }}-frontend-config
+  labels:
+    app: {{ include "microservice.name" . }}
+spec:
+  redirectToHttps:
+    enabled: true
+{{- end }}
